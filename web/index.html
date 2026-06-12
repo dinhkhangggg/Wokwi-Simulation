@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIoT Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background glowing orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <!-- School Logo fixed to top-left of screen -->
+    <img src="logo.png" alt="School Logo" class="school-logo">
+
+    <div class="dashboard">
+        <header>
+            <div>
+                <div class="status-indicator" id="status-indicator">
+                    <span class="pulse-dot" id="status-dot"></span>
+                    <span class="status-text" id="status-text">System Online</span>
+                </div>
+            </div>
+            <h1>AIoT Command Center</h1>
+            <p class="subtitle">Real-time telemetry and hardware control</p>
+        </header>
+
+        <main class="grid">
+            <!-- Sensors -->
+            <div class="card sensor-card temp-card">
+                <div class="card-header">
+                    <div class="icon-box">🌡️</div>
+                    <h2>Temperature</h2>
+                </div>
+                <div class="value-container">
+                    <div class="value" id="temp-value">--</div>
+                    <span class="unit">°C</span>
+                </div>
+            </div>
+
+            <div class="card sensor-card hum-card">
+                <div class="card-header">
+                    <div class="icon-box">💧</div>
+                    <h2>Humidity</h2>
+                </div>
+                <div class="value-container">
+                    <div class="value" id="hum-value">--</div>
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="card sensor-card gas-card">
+                <div class="card-header">
+                    <div class="icon-box">💨</div>
+                    <h2>Air Quality</h2>
+                </div>
+                <div class="value-container">
+                    <div class="value" id="mq-value">--</div>
+                    <span class="unit">MQ</span>
+                </div>
+            </div>
+
+            <div class="card sensor-card light-card">
+                <div class="card-header">
+                    <div class="icon-box">☀️</div>
+                    <h2>Light Level</h2>
+                </div>
+                <div class="value-container">
+                    <div class="value" id="ldr-value">--</div>
+                    <span class="unit">LDR</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="card control-card led-card">
+                <div class="card-header">
+                    <div class="icon-box">💡</div>
+                    <h2>Main LED</h2>
+                </div>
+                <div class="control-action">
+                    <label class="switch">
+                        <input type="checkbox" id="led-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card control-card motor-card">
+                <div class="card-header">
+                    <div class="icon-box">⚙️</div>
+                    <h2>Servo Motor</h2>
+                </div>
+                <div class="control-action slider-container">
+                    <div class="motor-value" id="motor-value">0°</div>
+                    <input type="range" id="motor-slider" min="0" max="180" value="0">
+                </div>
+            </div>
+
+            </div>
+        </main>
+    </div>
+    
+    <script type="module" src="app.js"></script>
+</body>
+</html>

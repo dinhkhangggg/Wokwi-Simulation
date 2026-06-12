@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "author": "Antigravity",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 19.2, "left": -62.36, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht", "top": -114.9, "left": -255, "attrs": {} },
+    { "type": "wokwi-gas-sensor", "id": "mq", "top": -54.9, "left": -185, "attrs": {} },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr",
+      "top": 188.9,
+      "left": -226.1,
+      "rotate": 270,
+      "attrs": {}
+    },
+    { "type": "board-ssd1306", "id": "oled", "top": -16.06, "left": 125.03, "attrs": {} },
+    { "type": "wokwi-led", "id": "led", "top": 111.6, "left": 176.6, "attrs": { "color": "red" } },
+    { "type": "wokwi-servo", "id": "servo", "top": 190, "left": 163.2, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "dht:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "dht:GND", "esp:GND", "black", [ "v0" ] ],
+    [ "dht:SDA", "esp:15", "green", [ "v0" ] ],
+    [ "mq:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "mq:GND", "esp:GND", "black", [ "v0" ] ],
+    [ "mq:AOUT", "esp:35", "blue", [ "h26.4", "v138.4" ] ],
+    [ "ldr:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "ldr:GND", "esp:GND", "black", [ "v0" ] ],
+    [ "ldr:AO", "esp:34", "yellow", [ "v0" ] ],
+    [ "oled:VCC", "esp:3V3", "red", [ "v-53.66", "h-120", "v116" ] ],
+    [ "oled:GND", "esp:GND", "black", [ "v-80", "h-140", "v170" ] ],
+    [ "oled:SDA", "esp:21", "green", [ "v-34.46", "h-108.5", "v144.8" ] ],
+    [ "oled:SCL", "esp:22", "yellow", [ "v-44.06", "h-117.87", "v125.6" ] ],
+    [ "led:C", "esp:GND", "black", [ "v0" ] ],
+    [ "led:A", "esp:2", "red", [ "v0" ] ],
+    [ "servo:V+", "esp:5V", "red", [ "v0" ] ],
+    [ "servo:GND", "esp:GND", "black", [ "v0" ] ],
+    [ "servo:PWM", "esp:18", "orange", [ "h-86.4", "v-134.2" ] ]
+  ],
+  "dependencies": {}
+}
