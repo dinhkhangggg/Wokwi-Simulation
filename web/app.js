@@ -3,6 +3,10 @@ import { getDatabase, ref, onValue, set, serverTimestamp } from "https://www.gst
 
 let latencyHistory = [];
 const controlRequests = {};
+let last_t1 = 0;
+let last_t2 = 0;
+let last_t3 = 0;
+
 const firebaseConfig = {
   apiKey: "AIzaSyDUTppfzrKaS_nHiOG4Nb37aVkK1sCsYsQ",
   authDomain: "home-4a6c1.firebaseapp.com",
@@ -101,6 +105,11 @@ onValue(ref(db, 'sensors'), (snapshot) => {
 
                 const t1 = data.t1 || 0;
                 const t2 = data.t2 || 0;
+                
+                last_t1 = t1;
+                last_t2 = t2;
+                last_t3 = t3;
+
                 const total = t1 + t2 + t3;
 
                 latencyHistory.push(total);
@@ -216,9 +225,11 @@ onValue(ref(db, 'control/ack'), (snapshot) => {
             
             // Độ trễ 1 chiều t4 = Tổng thời gian khứ hồi / 2 (Giả định mạng 2 chiều tương đương)
             const t4 = total_rtt / 2.0;
+            const comm = (last_t1 + last_t2 + last_t3 + t4) / 2.0;
             
             set(ref(db, 'control/latency_report'), {
-                t4: Math.round(t4)
+                t4: Math.round(t4),
+                comm: Math.round(comm)
             });
             
             delete controlRequests[data.cmd_id];

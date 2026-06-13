@@ -45,6 +45,9 @@ int mq_value = 0;
 int ldr_value = 0;
 unsigned long current_t1 = 0;
 unsigned long current_t2 = 0;
+double last_r_t1 = 0;
+double last_r_t2 = 0;
+double last_r_t3 = 0;
 bool pending_ack = false;
 long long ack_cmd_id = 0;
 
@@ -64,7 +67,7 @@ struct Stat {
 };
 
 Stat stat_t1, stat_t2, stat_t3, stat_tmon;
-Stat stat_t4;
+Stat stat_t4, stat_comm;
 
 void connectWiFi();
 void initFirebase();
@@ -288,6 +291,7 @@ void streamCallback(StreamData data)
     else if (data.dataPath() == "/latency_report")
     {
       double r_t4 = 0;
+      double r_comm = 0;
       
       json->get(jsonData, "t4");
       if (jsonData.success) {
@@ -298,14 +302,25 @@ void streamCallback(StreamData data)
         if (jsonData.success) r_t4 = jsonData.doubleValue;
       }
       
+      json->get(jsonData, "comm");
+      if (jsonData.success) r_comm = jsonData.doubleValue;
+      
       stat_t4.add(r_t4);
+      stat_comm.add(r_comm);
+
+      double total_sys = last_r_t1 + last_r_t2 + last_r_t3 + r_t4;
 
       Serial.println();
-      Serial.println("======= CONTROL LATENCY ======");
-      Serial.printf("t4 Dashboard->Actuator : %.0f ms  (AVG: %.0f ms)\r\n", r_t4, stat_t4.avg());
-      Serial.printf("TOTAL CONTROL          : %.0f ms  (AVG: %.0f ms)\r\n", r_t4, stat_t4.avg());
+      Serial.println("====== SYSTEM LATENCY ======");
+      Serial.printf("t1 Sensor->ESP32       : %.3f ms\r\n", last_r_t1);
+      Serial.printf("t2 ESP32->Firebase     : %.0f ms\r\n", last_r_t2);
+      Serial.printf("t3 Firebase->Dashboard : %.0f ms\r\n", last_r_t3);
+      Serial.printf("t4 Dashboard->Actuator : %.0f ms\r\n", r_t4);
+      Serial.println("----------------------------");
+      Serial.printf("TOTAL (t1+t2+t3+t4)    : %.0f ms\r\n", total_sys);
+      Serial.printf("COMM (t1+t2+t3+t4)/2   : %.0f ms  (AVG: %.0f ms)\r\n", r_comm, stat_comm.avg());
       Serial.printf("[Samples: %d]\r\n", stat_t4.count);
-      Serial.println("==============================");
+      Serial.println("============================");
     }
     else if (data.dataPath() == "/monitoring_report")
     {
@@ -319,19 +334,14 @@ void streamCallback(StreamData data)
       json->get(jsonData, "total");
       if (jsonData.success) r_total = jsonData.doubleValue;
 
+      last_r_t1 = r_t1;
+      last_r_t2 = r_t2;
+      last_r_t3 = r_t3;
+
       stat_t1.add(r_t1);
       stat_t2.add(r_t2);
       stat_t3.add(r_t3);
       stat_tmon.add(r_total);
-
-      Serial.println();
-      Serial.println("===== MONITORING LATENCY =====");
-      Serial.printf("t1 Sensor->ESP32       : %.3f ms  (AVG: %.3f ms)\r\n", r_t1, stat_t1.avg());
-      Serial.printf("t2 ESP32->Firebase     : %.0f ms  (AVG: %.0f ms)\r\n", r_t2, stat_t2.avg());
-      Serial.printf("t3 Firebase->Dashboard : %.0f ms  (AVG: %.0f ms)\r\n", r_t3, stat_t3.avg());
-      Serial.printf("TOTAL MONITORING       : %.0f ms  (AVG: %.0f ms)\r\n", r_total, stat_tmon.avg());
-      Serial.printf("[Samples: %d]\r\n", stat_tmon.count);
-      Serial.println("==============================");
     }
   }
 }
